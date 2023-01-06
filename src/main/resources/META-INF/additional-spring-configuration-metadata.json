@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "film-repository.path",
+    "type": "java.lang.String",
+    "description": "A description for 'film-repository.path'"
+  },
+  {
+    "name": "imdb.path",
+    "type": "java.lang.String",
+    "description": "A description for 'imdb.path'"
+  },
+  {
+    "name": "imdb.url",
+    "type": "java.lang.String",
+    "description": "A description for 'imdb.url'"
+  }
+]}
