@@ -1,8 +1,6 @@
 package com.forrest.cinema;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +54,7 @@ class FilmsLibraryApplicationTests {
 		Film f = filmRepository.findById(1L).get();
 		Genre genre = genreRepository.findById(1L).get();
 		System.out.println(genre.getNameGenre());
-		ArrayList genres = new ArrayList<>();
+		ArrayList<Genre> genres = new ArrayList<>();
 		genres.add(genre);
 		f.setGenres(genres);
 		//f.add(genre);
@@ -74,9 +72,10 @@ class FilmsLibraryApplicationTests {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void testGetAllFilmFromRepo() {
-		List<File> files = filmService.getAllFilmsInRepository();
+		List<File> files = filmService.getAllFilesInRepository();
 	}
 	
 	@Test

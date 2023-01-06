@@ -16,5 +16,6 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
 	@Query("SELECT f.titleFilm FROM Film f")
 	List<String> findAllFilmsTitle();
 	
-
+	@Query("SELECT f FROM Film f WHERE idImdb IS NULL OR idImdb = '' ")
+	List<Film> findAllFilmsWithoutIdImdb();
 }

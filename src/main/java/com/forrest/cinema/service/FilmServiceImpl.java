@@ -4,25 +4,12 @@
 package com.forrest.cinema.service;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.DirectoryIteratorException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import org.jsoup.Connection;
@@ -92,14 +79,15 @@ public class FilmServiceImpl implements FilmService {
 		return filmRepository.saveAll(films);
 	}
 	
-	public List<File> getAllFilmsInRepository() {
-
+	@Override
+	public List<File> getAllFilesInRepository() {
 		return CinemaUtilities.listOfFiles(filmRepoPath);
 	}
 	
-	public List<File> getNewFilmsFilesInRepository() {
+	@Override
+	public List<File> getNewFilesInRepository() {
 
-		List<File> filmFilesList = this.getAllFilmsInRepository();
+		List<File> filmFilesList = this.getAllFilesInRepository();
 		List<String> titleFilmsList = filmRepository.findAllFilmsTitle();
 		List<File> newFilmsFiles = new ArrayList<>();
 		
@@ -122,18 +110,78 @@ public class FilmServiceImpl implements FilmService {
 			film.setPath(file.getAbsolutePath());
 			film.setSize(CinemaUtilities.convertSizeFileToGigabytes(file));
 			films.add(film);
-		}
-		
-		return films;
-		
+		}		
+		return films;		
 	}
 	
 	public void saveAllNewFilms() {
 		
-		List<File> files = this.getNewFilmsFilesInRepository();
+		List<File> files = this.getNewFilesInRepository();
 		List<Film> newFilms = this.fileToFilm(files);
-		//this.getIdImdb(newFilms);
+		this.getIdImdb(newFilms);
 		this.saveAllFilms(newFilms);		
+	}
+	
+	public List<Film> getIdImdb(List<Film> films) {
+		
+		List<Film> updatedFilm = new ArrayList<>();
+		
+		for (Film film : films) {
+
+			String titleFilm = film.getTitleFilm();
+			
+			//Connection  to imdb webSite with URL find + titleFilm
+			Connection connection = Jsoup.connect(imdbURL + titleFilm);
+			
+			// need userAgent for avoid error 403
+			connection.userAgent("Mozilla/5.0");
+			
+			try {
+				Document doc = connection.get();
+				
+				// get link in html page where find titleFilm and imdb id
+				Elements docElements = doc.select(".ipc-metadata-list-summary-item__tc a[href]");
+				
+				// take the first link in search page
+				Element headline = docElements.first();
+				String officialTitleFilm = headline.text();
+				String url = headline.absUrl("href");
+				String idImdb = this.getIdImdbInURL(url);
+				
+				// for detect if we get wrong film
+				int distance = CinemaUtilities.getLevenshteinDistance(titleFilm, officialTitleFilm);
+				
+				film.setOfficialTitleFilm(officialTitleFilm);
+				film.setIdImdb(idImdb);
+				film.setDistanceTitleToOfficialTitle(distance);
+				
+				updatedFilm.add(film);
+				
+				// Sleep 10 sec between every connection for avoid too much request in a short time
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+			} catch ( IOException ioe ) {
+				ioe.printStackTrace();
+			}
+		}
+		
+		return updatedFilm;
+	}
+	
+	// exemple url return https://www.imdb.com/title/tt0295736/?ref_=fn_al_tt_1
+	public String getIdImdbInURL(String url) {
+
+		if (!url.isEmpty()) {
+			String[] strs = url.split("/", 6);
+			return strs[4];
+		} else {
+			return url;
+		}
+		
 	}
 	
 	
