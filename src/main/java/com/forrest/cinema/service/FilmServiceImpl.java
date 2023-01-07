@@ -17,10 +17,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.forrest.cinema.entities.Film;
 import com.forrest.cinema.repos.FilmRepository;
 import com.forrest.cinema.utils.CinemaUtilities;
+
 
 /**
  * @author martin
@@ -29,6 +32,8 @@ import com.forrest.cinema.utils.CinemaUtilities;
 
 @Service
 public class FilmServiceImpl implements FilmService {
+	
+	private static final Logger Logger = LoggerFactory.getLogger(FilmServiceImpl.class);
 	
 	@Autowired
 	FilmRepository filmRepository;
@@ -144,28 +149,35 @@ public class FilmServiceImpl implements FilmService {
 				
 				// take the first link in search page
 				Element headline = docElements.first();
-				String officialTitleFilm = headline.text();
-				String url = headline.absUrl("href");
-				String idImdb = this.getIdImdbInURL(url);
-				
-				// for detect if we get wrong film
-				int distance = CinemaUtilities.getLevenshteinDistance(titleFilm, officialTitleFilm);
-				
-				film.setOfficialTitleFilm(officialTitleFilm);
-				film.setIdImdb(idImdb);
-				film.setDistanceTitleToOfficialTitle(distance);
-				
-				updatedFilm.add(film);
-				
-				// Sleep 10 sec between every connection for avoid too much request in a short time
+				if (headline != null) {
+					String officialTitleFilm = headline.text();
+					String url = headline.absUrl("href");
+					String idImdb = this.getIdImdbInURL(url);
+					
+					// for detect if we get wrong film
+					int distance = CinemaUtilities.getLevenshteinDistance(titleFilm, officialTitleFilm);
+	
+					film.setOfficialTitleFilm(officialTitleFilm);
+					film.setIdImdb(idImdb);
+					film.setDistanceTitleToOfficialTitle(distance);
+					
+					System.out.println(titleFilm +" -> "+ officialTitleFilm +" -> "+ distance);
+					updatedFilm.add(film);
+				} else {
+					film.setOfficialTitleFilm("ERROR");
+					film.setDistanceTitleToOfficialTitle(999);
+					updatedFilm.add(film);
+					Logger.info("Nothing find in imdb search for " + titleFilm);
+				}
+				// Sleep 5 sec between every connection for avoid too much request in a short time
 				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Thread.sleep(5000);
+				} catch (InterruptedException ie) {
+					Logger.error("INTERRUPTED_EXCEPTION_DURING_SLEEP_IN_GET_ID_IMDB", ie);
 				}
 				
 			} catch ( IOException ioe ) {
-				ioe.printStackTrace();
+				Logger.error("IO_EXCEPTION_IN_GET_ID_IMDB", ioe);
 			}
 		}
 		
@@ -179,6 +191,7 @@ public class FilmServiceImpl implements FilmService {
 			String[] strs = url.split("/", 6);
 			return strs[4];
 		} else {
+			Logger.warn("SPLIT_URL_IMPOSSIBLE");
 			return url;
 		}
 		

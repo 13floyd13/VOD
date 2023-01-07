@@ -13,11 +13,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.forrest.cinema.service.FilmServiceImpl;
+
 /**
  * @author martin
  *
  */
 public final class CinemaUtilities {
+	
+	private static final Logger Logger = LoggerFactory.getLogger(CinemaUtilities.class);
 
 	public static int getLevenshteinDistance(String str1, String str2) {
 		String regexAlphaNum = "[^a-zA-Z0-9]";
@@ -97,8 +104,8 @@ public final class CinemaUtilities {
 						fileList.add(path.toFile());
 					});
 			}
-		} catch (IOException e) {
-			
+		} catch (IOException ioe) {
+			Logger.error("IO_EXCEPTION_LIST_OF_FILES", ioe);
 		}
 
 		return fileList;

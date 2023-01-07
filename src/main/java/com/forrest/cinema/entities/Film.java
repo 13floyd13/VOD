@@ -24,8 +24,6 @@ import jakarta.persistence.Table;
 @Table(name = "film")
 public class Film implements Serializable {
 
-
-
 	private static final long serialVersionUID = -3585576009123254031L;
 
 	@Id
