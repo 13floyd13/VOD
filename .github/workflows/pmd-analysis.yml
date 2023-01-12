@@ -20,7 +20,7 @@ jobs:
           cache: 'maven'
         
       - name: PMD
-        run: mvn pmd:pmd -Dpmd.rulesets=file:ruleset.xml -Dpmd.render.xml=true
+        run: mvn pmd:pmd -Dpmd.rulesets=file:ruleset.xml -Dpmd.format=html
       - name: Save PMD report
         run: |
           mkdir -p pmd-report
