@@ -7,24 +7,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set Java Home
-      env:
-        JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
-      run: echo "JAVA_HOME is set to $JAVA_HOME"
-    - name: Set up JDK
-      uses: actions/setup-java@v1
+
+    - name: Set up Java JDK
+      uses: actions/setup-java@v3.9.0
       with:
         java-version: '17'
+        
+    - name: Setup Maven
+      uses: actions/setup-maven@v2
+      with:
+        maven-version: 4.0.0
+        
     - name: Run PMD
       run: |
         ./mvnw pmd:pmd -Dpmd.rulesets=file:pmd-ruleset.xml -Dpmd.render.xml=false
       env:
         MAVEN_OPTS: "-Dmaven.repo.local=$MAVEN_USER_HOME -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
+        
     - name: Generate report
       run: |
         ./mvnw pmd:pmd -Dpmd.rulesets=file:pmd-ruleset.xml -Dpmd.render.xml=true
       env:
         MAVEN_OPTS: "-Dmaven.repo.local=$MAVEN_USER_HOME -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
+        
     - name: Generate HTML report
       run: |
         ./mvnw pmd:pmd -Dpmd.rulesets=file:pmd-ruleset.xml -Dpmd.render.xml=true -Dpmd.format=html
