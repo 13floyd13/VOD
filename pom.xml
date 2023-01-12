@@ -89,6 +89,7 @@
 		          			<rulesets>
 		            			<ruleset>ruleset.xml</ruleset>
 		          			</rulesets>
+		          			<outputDirectory>target/pmd-report</outputDirectory>
 		          			<format>html</format>
 		        		</configuration>
 		      		</execution>
