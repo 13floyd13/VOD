@@ -20,10 +20,11 @@ jobs:
           cache: 'maven'
         
       - name: PMD
-        run: mvn pmd:pmd -Dpmd.rulesets=file:pmd-ruleset.xml -Dpmd.render.xml=false
+        run: mvn pmd:pmd -Dpmd.rulesets=file:pmd-ruleset.xml -Dpmd.render.xml=true
       - name: Save PMD report
         run: |
           mkdir -p pmd-report
+          cp target/site/pmd.html pmd-report/pmd.html
           cp target/pmd.xml pmd-report/pmd.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
