@@ -14,10 +14,6 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
         
-    - name: Setup Maven
-      uses: stCarolas/setup-maven@v.4.5
-      with:
-        maven-version: 4.0.0
         
     - name: Run PMD
       run: |
