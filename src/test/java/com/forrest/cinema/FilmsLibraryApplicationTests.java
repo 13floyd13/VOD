@@ -13,7 +13,8 @@ import com.forrest.cinema.entities.Film;
 import com.forrest.cinema.entities.Genre;
 import com.forrest.cinema.repos.FilmRepository;
 import com.forrest.cinema.repos.GenreRepository;
-import com.forrest.cinema.service.FilmService;
+import com.forrest.cinema.service.FilmServiceImpl;
+
 
 @SpringBootTest
 class FilmsLibraryApplicationTests {
@@ -25,7 +26,10 @@ class FilmsLibraryApplicationTests {
 	private GenreRepository genreRepository;
 	
 	@Autowired
-	private FilmService filmService;
+	private FilmServiceImpl filmService;
+	
+//	@Autowired
+//	private RestTMDBController restTMDBController;
 
 	@Test
 	public void testCreateFilm() {
@@ -64,11 +68,14 @@ class FilmsLibraryApplicationTests {
 	
 	@Test
 	public void testFindFilmsByGenre() {
-		String genre = "Action";
-		List<Film> films = filmRepository.findAllFilmsByGenre(genre); //filmService.getAllFilmsByGenre(genre);
-		
-		for(Film f : films) {
-			System.out.println(f.getTitleFilm());
+		String genreStr = "Action";
+		//Genre genre = genreRepository.findByNameGenre(genreStr);
+		List<Film> films = filmRepository.findAllFilmsByGenre(genreStr);
+		if (films.isEmpty() || films == null) {
+			System.out.println("nope");
+		}
+		for (Film film : films) {
+			System.out.println(film.getTitleFilm());
 		}
 	}
 	
@@ -81,12 +88,20 @@ class FilmsLibraryApplicationTests {
 	@Test
 	public void testSaveAllNewFilms() {
 		filmRepository.deleteAll();
-		filmService.saveAllNewFilms();
-		
+		filmService.saveAllNewFilms();	
 	}
 	
 	@Test
 	void contextLoads() {
+	}
+	
+	@Test
+	public void testWebClient() {
+		
+		List<Film> films = filmRepository.findAll();
+		films = filmService.getTMDBInfos(films);
+		
+		filmService.saveAllFilms(films);
 	}
 
 }

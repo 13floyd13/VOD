@@ -20,9 +20,14 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.forrest.cinema.controller.RestTMDBController;
 import com.forrest.cinema.entities.Film;
+import com.forrest.cinema.entities.Genre;
+import com.forrest.cinema.entities.MovieTMDB;
 import com.forrest.cinema.repos.FilmRepository;
 import com.forrest.cinema.utils.CinemaUtilities;
+
+import reactor.core.publisher.Mono;
 
 
 /**
@@ -30,13 +35,22 @@ import com.forrest.cinema.utils.CinemaUtilities;
  *
  */
 
+
 @Service
 public class FilmServiceImpl implements FilmService {
+	
+	
 	
 	private static final Logger Logger = LoggerFactory.getLogger(FilmServiceImpl.class);
 	
 	@Autowired
 	FilmRepository filmRepository;
+	
+	@Autowired
+	GenreServiceImpl genreService;
+	
+	@Autowired
+	private RestTMDBController restTMDBController;
 	
 	@Value("${film-repository.path}")
 	private String filmRepoPath;
@@ -124,6 +138,7 @@ public class FilmServiceImpl implements FilmService {
 		List<File> files = this.getNewFilesInRepository();
 		List<Film> newFilms = this.fileToFilm(files);
 		this.getIdImdb(newFilms);
+		//this.getTMDBInfos(newFilms);
 		this.saveAllFilms(newFilms);		
 	}
 	
@@ -167,8 +182,9 @@ public class FilmServiceImpl implements FilmService {
 					film.setOfficialTitleFilm("ERROR");
 					film.setDistanceTitleToOfficialTitle(999);
 					updatedFilm.add(film);
-					Logger.info("Nothing find in imdb search for " + titleFilm);
+					Logger.warn("Nothing find in imdb search for " + titleFilm);
 				}
+				
 				// Sleep 5 sec between every connection for avoid too much request in a short time
 				try {
 					Thread.sleep(5000);
@@ -179,8 +195,7 @@ public class FilmServiceImpl implements FilmService {
 			} catch ( IOException ioe ) {
 				Logger.error("IO_EXCEPTION_IN_GET_ID_IMDB", ioe);
 			}
-		}
-		
+		}	
 		return updatedFilm;
 	}
 	
@@ -198,5 +213,58 @@ public class FilmServiceImpl implements FilmService {
 	}
 	
 	
+	public List<Film> getTMDBInfos(List<Film> films) {
+
+		
+		List<Film> updatedFilms = new ArrayList<>();
+		List<Genre> genres = genreService.getAllGenres();
+		
+		for (Film film : films) {
+			List<Genre> newGenres = new ArrayList<>();
+			try {
+			Mono<MovieTMDB> movieMono = restTMDBController.getInfosFromApiTMDB(film.getIdImdb());
+			MovieTMDB movie = movieMono.block();
+			
+				if(movie != null) {
+				film.setOriginalTitleFilm(movie.getOriginal_title());
+				film.setYearFilm(movie.getRelease_date());
+				if (movie.getOverview().length() > 253) {
+					film.setSynopsisFilm(movie.getOverview().substring(0, 253));
+				}else {
+					film.setSynopsisFilm(movie.getOverview());
+				}
+				
+				film.setPosterFilm(movie.getPoster_path());
+				film.setTmdbRatingFilm(movie.getVote_average());
+				film.setBudget(movie.getBudget());
+				film.setRevenue(movie.getRevenue());
+				film.setOriginalLanguage(movie.getOriginal_language());
+				film.setTagline(movie.getTagline());
+				film.setVoteCount(movie.getVote_count());;
+				
+				
+				movie.getGenres().stream().forEach(genreName->{
+				    Genre genre = genres.stream().filter(g->g.getNameGenre().equals(genreName.getName())).findFirst().orElse(null);
+				    if(genre != null){
+				      newGenres.add(genre);
+				    }
+				});
+				
+				film.setGenres(newGenres);
+				
+				
+				if(movie.getProduction_companies().size() > 0) {
+					film.setProductionFilm(movie.getProduction_companies().get(0).getName());
+				}
+				}
+			} catch (Exception e){
+				Logger.error("erreur ici", e);
+			}
+
+			updatedFilms.add(film);
+		}
+
+		return updatedFilms;
+	}
 
 }

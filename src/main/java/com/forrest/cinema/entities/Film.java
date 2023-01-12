@@ -44,14 +44,18 @@ public class Film implements Serializable {
 	private String countryFilm;
 	private String awardsFilms;
 	private String posterFilm;
-	private String imdbRatingFilm;
+	private Long tmdbRatingFilm;
 	private String typeFilm;
-	private String boxOfficeFilm;
+	private Long budget;
+	private Long revenue;
+	private String originalLanguage;
+	private String tagline;
 	private String productionFilm;
 	private String languagesFilm;
 	private int distanceTitleToOfficialTitle;
 	private String path;
 	private double size;
+	private Integer voteCount;
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(
@@ -275,17 +279,17 @@ public class Film implements Serializable {
 	}
 
 	/**
-	 * @return the imdbRatingFilm
+	 * @return the tmdbRatingFilm
 	 */
-	public String getImdbRatingFilm() {
-		return imdbRatingFilm;
+	public Long getTmdbRatingFilm() {
+		return tmdbRatingFilm;
 	}
 
 	/**
-	 * @param imdbRatingFilm the imdbRatingFilm to set
+	 * @param tmdbRatingFilm the tmdbRatingFilm to set
 	 */
-	public void setImdbRatingFilm(String imdbRatingFilm) {
-		this.imdbRatingFilm = imdbRatingFilm;
+	public void setTmdbRatingFilm(Long tmdbRatingFilm) {
+		this.tmdbRatingFilm = tmdbRatingFilm;
 	}
 
 	/**
@@ -303,17 +307,59 @@ public class Film implements Serializable {
 	}
 
 	/**
-	 * @return the boxOfficeFilm
+	 * @return the budget
 	 */
-	public String getBoxOfficeFilm() {
-		return boxOfficeFilm;
+	public Long getBudget() {
+		return budget;
 	}
 
 	/**
-	 * @param boxOfficeFilm the boxOfficeFilm to set
+	 * @param budget the budget to set
 	 */
-	public void setBoxOfficeFilm(String boxOfficeFilm) {
-		this.boxOfficeFilm = boxOfficeFilm;
+	public void setBudget(Long budget) {
+		this.budget = budget;
+	}
+
+	/**
+	 * @return the revenue
+	 */
+	public Long getRevenue() {
+		return revenue;
+	}
+
+	/**
+	 * @param revenue the revenue to set
+	 */
+	public void setRevenue(Long revenue) {
+		this.revenue = revenue;
+	}
+
+	/**
+	 * @return the originalLanguage
+	 */
+	public String getOriginalLanguage() {
+		return originalLanguage;
+	}
+
+	/**
+	 * @param originalLanguage the originalLanguage to set
+	 */
+	public void setOriginalLanguage(String originalLanguage) {
+		this.originalLanguage = originalLanguage;
+	}
+
+	/**
+	 * @return the tagline
+	 */
+	public String getTagline() {
+		return tagline;
+	}
+
+	/**
+	 * @param tagline the tagline to set
+	 */
+	public void setTagline(String tagline) {
+		this.tagline = tagline;
 	}
 
 	/**
@@ -343,38 +389,6 @@ public class Film implements Serializable {
 	public void setLanguagesFilm(String languagesFilm) {
 		this.languagesFilm = languagesFilm;
 	}
-	
-	/**
-	 * @return the genres
-	 */
-	public List<Genre> getGenres() {
-		return genres;
-	}
-
-	/**
-	 * @param genres the genres to set
-	 */
-	public void setGenres(List<Genre> genres) {
-		this.genres = genres;
-	}
-	
-	/**
-	 * @param e
-	 * @return
-	 * @see java.util.ArrayList#add(java.lang.Object)
-	 */
-	public boolean add(String e) {
-		return actorsFilm.add(e);
-	}
-
-	/**
-	 * @param e
-	 * @return
-	 * @see java.util.List#add(java.lang.Object)
-	 */
-	public boolean add(Genre e) {
-		return genres.add(e);
-	}
 
 	/**
 	 * @return the distanceTitleToOfficialTitle
@@ -389,7 +403,7 @@ public class Film implements Serializable {
 	public void setDistanceTitleToOfficialTitle(int distanceTitleToOfficialTitle) {
 		this.distanceTitleToOfficialTitle = distanceTitleToOfficialTitle;
 	}
-	
+
 	/**
 	 * @return the path
 	 */
@@ -417,6 +431,50 @@ public class Film implements Serializable {
 	public void setSize(double size) {
 		this.size = size;
 	}
-	
-	
+
+	/**
+	 * @return the vote_count
+	 */
+	public Integer getVoteCount() {
+		return voteCount;
+	}
+
+	/**
+	 * @param vote_count the vote_count to set
+	 */
+	public void setVoteCount(Integer voteCount) {
+		this.voteCount = voteCount;
+	}
+
+	/**
+	 * @return the genres
+	 */
+	public List<Genre> getGenres() {
+		return genres;
+	}
+
+	/**
+	 * @param genres the genres to set
+	 */
+	public void setGenres(List<Genre> genres) {
+		this.genres = genres;
+	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	/**
+	 * @param e
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean add(Genre e) {
+		return genres.add(e);
+	}
+
+
 }
