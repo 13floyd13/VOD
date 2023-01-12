@@ -5,19 +5,20 @@
 		xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
     <description>My ruleset</description>
 
-    <exclude-pattern>.*/some/package/.*</exclude-pattern>
-    <exclude-pattern>.*/some/other/package/FunkyClassNamePrefix.*</exclude-pattern>
-    <include-pattern>.*/some/package/ButNotThisClass.*</include-pattern>
+      <exclude-pattern>.*/some/package/.*</exclude-pattern>
+      <exclude-pattern>.*/some/other/package/FunkyClassNamePrefix.*</exclude-pattern>
+      <include-pattern>.*/some/package/ButNotThisClass.*</include-pattern>
 
-    <!-- Rules here ... -->
+      <!-- Rules here ... -->
 
-    <rule ref="category/java/errorprone.xml/EmptyCatchBlock"
-        message="Empty catch blocks should be avoided" >
-        <priority>5</priority>
-    </rule>
-    <rule ref="category/java/codestyle.xml/ClassNamingConventions" />
-    <rule ref="category/java/codestyle.xml/EmptyControlStatement" />
-    <rule ref="category/java/design.xml/AvoidCatchingGenericException" />
+      <rule ref="category/java/errorprone.xml/EmptyCatchBlock"
+          message="Empty catch blocks should be avoided" >
+          <priority>5</priority>
+      </rule>
+      <rule ref="category/java/codestyle.xml/ClassNamingConventions" />
+      <rule ref="category/java/codestyle.xml/EmptyControlStatement" />
+      <rule ref="category/java/design.xml/AvoidCatchingGenericException" />
+
 
 
 </ruleset>
