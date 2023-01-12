@@ -88,6 +88,7 @@
 		        		<configuration>
 		          			<rulesets>
 		            			<ruleset>ruleset.xml</ruleset>
+		            			<ruleset>/category/java/bestpractices.xml</ruleset>
 		          			</rulesets>
 		          			<outputDirectory>target/pmd-report</outputDirectory>
 		          			<format>html</format>
