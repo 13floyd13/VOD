@@ -75,6 +75,7 @@
 	            <artifactId>maven-pmd-plugin</artifactId>
 	            <version>6.53.0</version>
             	<configuration>
+        			<targetJdk>1.8</targetJdk>
 		        	<rulesets>
 		            	<ruleset>ruleset.xml</ruleset>
 		            </rulesets>
