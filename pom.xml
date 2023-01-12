@@ -75,10 +75,12 @@
 	            <artifactId>maven-pmd-plugin</artifactId>
 	            <version>3.20.0</version>
             	<configuration>
-        			<targetJdk>1.8</targetJdk>
-		        	<rulesets>
-		            	<ruleset>ruleset.xml</ruleset>
-		            </rulesets>
+        		<targetJdk>1.8</targetJdk>
+			<format>html</format>
+        		<linkXref>true</linkXref>
+		        <rulesets>
+		        	<ruleset>ruleset.xml</ruleset>
+		        </rulesets>
             	</configuration>
         	</plugin>
 		</plugins>
