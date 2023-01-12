@@ -1,0 +1,30 @@
+name: PMD_analys
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    name: Java ${{ matrix.Java }} sample
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup java
+        uses: actions/setup-java@v3
+  
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+        
+      - name: PMD
+        run: mvn pmd:pmd -Dpmd.rulesets=file:pmd-ruleset.xml -Dpmd.render.xml=false
+      - name: Save PMD report
+        run: |
+          mkdir -p pmd-report
+          cp target/pmd.xml pmd-report/pmd.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
