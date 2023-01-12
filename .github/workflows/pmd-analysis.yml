@@ -10,7 +10,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
-        java-version: '14'
+        java-version: '17'
     - name: Run PMD
       run: |
         ./mvnw pmd:pmd -Dpmd.rulesets=file:pmd-ruleset.xml -Dpmd.render.xml=false
