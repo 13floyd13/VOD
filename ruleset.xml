@@ -17,6 +17,7 @@
     </rule>
     <rule ref="category/java/codestyle.xml/ClassNamingConventions" />
     <rule ref="category/java/codestyle.xml/EmptyControlStatement" />
+    <rule ref="category/java/design.xml/AvoidCatchingGenericException" />
 
 
 </ruleset>
