@@ -18,9 +18,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
-          
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
         
       - name: PMD
         run: mvn pmd:pmd -Dpmd.rulesets=file:pmd-ruleset.xml -Dpmd.render.xml=false
