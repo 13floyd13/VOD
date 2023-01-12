@@ -73,7 +73,7 @@
 			<plugin>
 	            <groupId>org.apache.maven.plugins</groupId>
 	            <artifactId>maven-pmd-plugin</artifactId>
-	            <version>3.13.0</version>
+	            <version>6.53.0</version>
             	<configuration>
 		        	<rulesets>
 		            	<ruleset>ruleset.xml</ruleset>
