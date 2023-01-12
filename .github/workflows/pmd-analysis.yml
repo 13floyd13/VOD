@@ -7,6 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Set Java Home
+      env:
+        JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
+      run: echo "JAVA_HOME is set to $JAVA_HOME"
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
