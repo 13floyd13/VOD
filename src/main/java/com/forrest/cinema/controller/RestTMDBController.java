@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.forrest.cinema.entities.MovieTMDB;
+import com.forrest.cinema.exceptions.ApiTMDBException;
 
 import reactor.core.publisher.Mono;
 
@@ -27,9 +28,8 @@ public class RestTMDBController {
 		this.webClient = webClient;
 	}
 
-    public Mono<MovieTMDB> getInfosFromApiTMDB(String movieId) {
+    public Mono<MovieTMDB> getInfosFromApiTMDB(String movieId) throws ApiTMDBException{
     	
-    	System.out.println(movieId);
     	webClient = WebClient.create();
 
     	try {   	
@@ -37,14 +37,13 @@ public class RestTMDBController {
 	    			   .uri("https://api.themoviedb.org/3/movie/{movieId}?api_key={apiKey}&language=fr-FR", movieId, apiKey)
 	    			   .retrieve()
 	    			   .onStatus(status -> status == HttpStatus.NOT_FOUND,
-	    			   res -> Mono.error(new Exception("Erreur client : " + res.statusCode() + " for id= " + movieId)))
-	    			   .onStatus(status -> status == HttpStatus.INTERNAL_SERVER_ERROR, res -> Mono.error(new Exception("Erreur serveur : " + res.statusCode())))
+	    			   		res -> Mono.error(new ApiTMDBException("Erreur client : " + res.statusCode() + " for id= " + movieId)))
+	    			   .onStatus(status -> status == HttpStatus.INTERNAL_SERVER_ERROR, res -> Mono.error(new ApiTMDBException("Erreur serveur : " + res.statusCode())))
 	    			   .bodyToMono(MovieTMDB.class)
-	    			   .doOnError(error -> Logger.error("Erreur de l'API : {}", error.getMessage()))
+	    			   .doOnError(error -> Mono.error(new ApiTMDBException("Erreur de l'API : " + error.getMessage())))
 	    			   .onErrorResume(error -> Mono.empty());
     	
-	    	System.out.println(movieId);
-    	  return movieMono;
+	    	return movieMono;
     	
     	} catch (WebClientResponseException e){
     		Logger.error("WEB_CLIENT_MOVIE_EXCEPTION id = " + movieId, e);
@@ -62,44 +61,17 @@ public class RestTMDBController {
     	
     	webClient = WebClient.create();
     	
-    	try {
     		Mono<String> genresMono = webClient.get()
     				.uri("https://api.themoviedb.org/3/genre/movie/list?api_key={apiKey}&language=fr-FR", apiKey)
     				.retrieve()
-    				//.onStatus(HttpStatusCode::isError, response -> Mono.error(new Exception("Erreur de l'API : " + response.statusCode())))
-    				//.onStatus(HttpStatusCode::is2xxSuccessful, response -> Mono.error(new Exception("Erreur de l'API : " + response.statusCode())))
-	    			.bodyToMono(String.class);
-//	    			.doOnNext(body -> Logger.error("Corps de la réponse : {}", body))
-//	    		    .doOnError(error -> Logger.error("Erreur lors de l'appel de l'API : {}", error))
-//	    		    .doOnSuccess(success -> Logger.error("Super"));
-	    		    //.map(response -> objectMapper.readValue(response, GenresTMDB.class));
-	    		    
-    		//System.out.println(genresMono.block().getGenresTMDB());
-    		
-
-//	    		    genresMono.doOnSuccess(genresTMDB -> {
-//	    		        System.out.println("GenresTMDB: " + genresTMDB);
-//	    		        //System.out.println("HTTP response body: " + genresTMDB.getBody());
-//	    		    }).subscribe();
-//    		List<GenreTMDB> genresList = genresMono
-//    			    .map(genres -> genres.getGenresTMDB())
-//    			    .block();
-    		
-//    		Mono<List<GenreTMDB>> genresListMono = genresMono.flatMap(genres -> {
-//    			  List<GenreTMDB> genresList = genres.getGenresTMDB();
-//    			  return Mono.just(genresList);
-//    			});
-
-    		//List<GenreTMDB> genresList = genresListMono.block();
-    		
-    		//System.out.println(genresList.size());
+    				.onStatus(status -> status == HttpStatus.NOT_FOUND,
+			   			res -> Mono.error(new ApiTMDBException("Erreur client : " + res.statusCode())))
+    				.onStatus(status -> status == HttpStatus.INTERNAL_SERVER_ERROR, res -> Mono.error(new ApiTMDBException("Erreur serveur : " + res.statusCode())))
+	    			.bodyToMono(String.class)
+	    			.doOnError(error -> Mono.error(new ApiTMDBException("Erreur de l'API : " + error.getMessage())))
+	    			.onErrorResume(error -> Mono.empty());
 
     		return genresMono;
-    		
-    	} catch (WebClientResponseException e) {
-    		Logger.error("WEB_CLIENT_GENRE_EXCEPTION", e);
-    		return null;
-    	}
     }
     
 }
