@@ -51,7 +51,7 @@ public class GenreServiceImpl implements GenreService {
 	}
 
 	@Override
-	public void deleteFilmById(Long id) {
+	public void deleteGenreById(Long id) {
 		genreRepository.deleteById(id);
 	}
 
@@ -65,34 +65,31 @@ public class GenreServiceImpl implements GenreService {
 		return genreRepository.findAll();
 	}
 	
-	public void getAllTMDBGenres() {
+	@Override
+	public List<String> getAllNameGenre() {
+		return genreRepository.findAllNameGenre();
+	}
+	
+	@Override
+	public Genre findGenreByName(String name) {
+		return genreRepository.findByNameGenre(name);
+	}
+	
+	@Override
+	public List<Genre> getAllTMDBGenres() {
 		
-		System.out.println("Salut");
-		
+		List<Genre> genresList = new ArrayList<>();
 		Mono<String> genresStrMono = restTMDBController.getAllTMDBGenres();
-		String reponse = genresStrMono.block();
-		System.out.println(reponse);
 		Gson gson = new Gson();
 		GenresTMDB genres = gson.fromJson(genresStrMono.block(), GenresTMDB.class);
-		System.out.println(genres.toString());
-		List<Genre> genresList = new ArrayList<>();
+
 		for (GenreTMDB genreTMDB : genres.getGenresTMDB()) {
 			Genre genre = new Genre();
 			genre.setNameGenre(genreTMDB.getName());
 			genresList.add(genre);
 		}
 		
-		this.saveAllGenre(genresList);
-		
+		return this.saveAllGenre(genresList);		
 	}
 	
-	public List<String> getAllNameGenre() {
-		return genreRepository.findAllNameGenre();
-	}
-	
-
-	public Genre findGenreByName(String name) {
-		return genreRepository.findByNameGenre(name);
-	}
-
 }

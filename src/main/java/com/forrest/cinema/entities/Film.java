@@ -64,15 +64,7 @@ public class Film implements Serializable {
 			inverseJoinColumns = @JoinColumn(name = "id_genre")
 	)
 	private List<Genre> genres = new ArrayList<>();
-
-	/**
-	 * 
-	 * @see java.util.List#clear()
-	 */
-	public void clear() {
-		genres.clear();
-	}
-
+	
 	public Film() {
 		super();
 	}
@@ -80,6 +72,14 @@ public class Film implements Serializable {
 	public Film(String titleFilm) {
 		super();
 		this.titleFilm = titleFilm;
+	}
+
+	/**
+	 * 
+	 * @see java.util.List#clear()
+	 */
+	public void clear() {
+		genres.clear();
 	}
 
 	/**

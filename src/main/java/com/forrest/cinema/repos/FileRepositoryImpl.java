@@ -40,7 +40,6 @@ public class FileRepositoryImpl implements FileRepository {
 		}
 		return fileList;
 	}
-
 	
 	@Override
 	public List<File> getNewFilesInDirectory(String directoryPath, List<String> actualFilesTitle) {
@@ -54,5 +53,4 @@ public class FileRepositoryImpl implements FileRepository {
 		}
 		return newFiles;
 	}
-
 }

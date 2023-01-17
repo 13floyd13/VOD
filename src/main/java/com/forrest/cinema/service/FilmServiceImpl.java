@@ -24,30 +24,30 @@ import com.forrest.cinema.controller.RestTMDBController;
 import com.forrest.cinema.entities.Film;
 import com.forrest.cinema.entities.Genre;
 import com.forrest.cinema.entities.MovieTMDB;
+import com.forrest.cinema.exceptions.ApiTMDBException;
+import com.forrest.cinema.repos.FileRepository;
 import com.forrest.cinema.repos.FilmRepository;
 import com.forrest.cinema.utils.CinemaUtilities;
 
 import reactor.core.publisher.Mono;
 
-
 /**
  * @author martin
  *
  */
-
-
 @Service
 public class FilmServiceImpl implements FilmService {
-	
-	
-	
+
 	private static final Logger Logger = LoggerFactory.getLogger(FilmServiceImpl.class);
 	
 	@Autowired
 	FilmRepository filmRepository;
 	
 	@Autowired
-	GenreServiceImpl genreService;
+	GenreService genreService;
+	
+	@Autowired
+	FileRepository fileRepository;
 	
 	@Autowired
 	private RestTMDBController restTMDBController;
@@ -89,6 +89,11 @@ public class FilmServiceImpl implements FilmService {
 	}
 
 	@Override
+	public List<String> getAllTitlesFilm() {
+		return filmRepository.findAllFilmsTitle();
+	}
+	
+	@Override
 	public List<Film> getAllFilmsByGenre(String genre) {
 		return filmRepository.findAllFilmsByGenre(genre);
 	}
@@ -99,26 +104,6 @@ public class FilmServiceImpl implements FilmService {
 	}
 	
 	@Override
-	public List<File> getAllFilesInRepository() {
-		return CinemaUtilities.listOfFiles(filmRepoPath);
-	}
-	
-	@Override
-	public List<File> getNewFilesInRepository() {
-
-		List<File> filmFilesList = this.getAllFilesInRepository();
-		List<String> titleFilmsList = filmRepository.findAllFilmsTitle();
-		List<File> newFilmsFiles = new ArrayList<>();
-		
-		for (File filmFile : filmFilesList) {
-			if (!titleFilmsList.contains(filmFile.getName())) {
-				newFilmsFiles.add(filmFile);
-			}
-		}
-		
-		return newFilmsFiles;
-	}
-	
 	public List<Film> fileToFilm(List<File> filesFilms) {
 		
 		List<Film> films = new ArrayList<>();
@@ -133,15 +118,18 @@ public class FilmServiceImpl implements FilmService {
 		return films;		
 	}
 	
-	public void saveAllNewFilms() {
+	@Override
+	public List<Film> saveAllNewFilms() {
 		
-		List<File> files = this.getNewFilesInRepository();
-		List<Film> newFilms = this.fileToFilm(files);
+		List<String> actualTitles = this.getAllTitlesFilm();
+		List<File> newFiles = fileRepository.getNewFilesInDirectory(filmRepoPath, actualTitles);
+		List<Film> newFilms = this.fileToFilm(newFiles);
 		this.getIdImdb(newFilms);
 		//this.getTMDBInfos(newFilms);
-		this.saveAllFilms(newFilms);		
+		return this.saveAllFilms(newFilms);		
 	}
 	
+	@Override
 	public List<Film> getIdImdb(List<Film> films) {
 		
 		List<Film> updatedFilm = new ArrayList<>();
@@ -190,8 +178,7 @@ public class FilmServiceImpl implements FilmService {
 					Thread.sleep(5000);
 				} catch (InterruptedException ie) {
 					Logger.error("INTERRUPTED_EXCEPTION_DURING_SLEEP_IN_GET_ID_IMDB", ie);
-				}
-				
+				}			
 			} catch ( IOException ioe ) {
 				Logger.error("IO_EXCEPTION_IN_GET_ID_IMDB", ioe);
 			}
@@ -206,65 +193,59 @@ public class FilmServiceImpl implements FilmService {
 			String[] strs = url.split("/", 6);
 			return strs[4];
 		} else {
-			Logger.warn("SPLIT_URL_IMPOSSIBLE");
+			Logger.error("SPLIT_URL_IMPOSSIBLE");
 			return url;
-		}
-		
+		}		
 	}
 	
-	
+	@Override
 	public List<Film> getTMDBInfos(List<Film> films) {
 
-		
 		List<Film> updatedFilms = new ArrayList<>();
 		List<Genre> genres = genreService.getAllGenres();
 		
 		for (Film film : films) {
 			List<Genre> newGenres = new ArrayList<>();
 			try {
-			Mono<MovieTMDB> movieMono = restTMDBController.getInfosFromApiTMDB(film.getIdImdb());
-			MovieTMDB movie = movieMono.block();
-			
+				Mono<MovieTMDB> movieMono = restTMDBController.getInfosFromApiTMDB(film.getIdImdb());
+				MovieTMDB movie = movieMono.block();
+				
 				if(movie != null) {
-				film.setOriginalTitleFilm(movie.getOriginal_title());
-				film.setYearFilm(movie.getRelease_date());
-				if (movie.getOverview().length() > 253) {
-					film.setSynopsisFilm(movie.getOverview().substring(0, 253));
-				}else {
-					film.setSynopsisFilm(movie.getOverview());
+					film.setOriginalTitleFilm(movie.getOriginal_title());
+					film.setYearFilm(movie.getRelease_date());
+					if (movie.getOverview().length() > 255) {
+						film.setSynopsisFilm(movie.getOverview().substring(0, 255));
+					}else {
+						film.setSynopsisFilm(movie.getOverview());
+					}
+					
+					film.setPosterFilm(movie.getPoster_path());
+					film.setTmdbRatingFilm(movie.getVote_average());
+					film.setBudget(movie.getBudget());
+					film.setRevenue(movie.getRevenue());
+					film.setOriginalLanguage(movie.getOriginal_language());
+					film.setTagline(movie.getTagline());
+					film.setVoteCount(movie.getVote_count());;
+								
+					movie.getGenres().stream().forEach(genreName->{
+					    Genre genre = genres.stream().filter(g->g.getNameGenre().equals(genreName.getName())).findFirst().orElse(null);
+					    if(genre != null){
+					      newGenres.add(genre);
+					    }
+					});
+					
+					film.setGenres(newGenres);
+					
+					//Add only one production
+					if(movie.getProduction_companies().size() > 0) {
+						film.setProductionFilm(movie.getProduction_companies().get(0).getName());
+					}
 				}
-				
-				film.setPosterFilm(movie.getPoster_path());
-				film.setTmdbRatingFilm(movie.getVote_average());
-				film.setBudget(movie.getBudget());
-				film.setRevenue(movie.getRevenue());
-				film.setOriginalLanguage(movie.getOriginal_language());
-				film.setTagline(movie.getTagline());
-				film.setVoteCount(movie.getVote_count());;
-				
-				
-				movie.getGenres().stream().forEach(genreName->{
-				    Genre genre = genres.stream().filter(g->g.getNameGenre().equals(genreName.getName())).findFirst().orElse(null);
-				    if(genre != null){
-				      newGenres.add(genre);
-				    }
-				});
-				
-				film.setGenres(newGenres);
-				
-				
-				if(movie.getProduction_companies().size() > 0) {
-					film.setProductionFilm(movie.getProduction_companies().get(0).getName());
-				}
-				}
-			} catch (Exception e){
-				Logger.error("erreur ici", e);
+			} catch (ApiTMDBException e){
+				Logger.error("API_TMDB_EXCEPTION", e);
 			}
-
 			updatedFilms.add(film);
 		}
-
 		return updatedFilms;
 	}
-
 }

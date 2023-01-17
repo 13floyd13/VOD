@@ -22,8 +22,9 @@ public interface FilmService {
 	List<Film> getAllFilms();
 	List<Film> getAllFilmsByGenre(String genre);
 	List<Film> saveAllFilms(List<Film> films);
-	List<File> getAllFilesInRepository();
-	List<File> getNewFilesInRepository();
 	List<Film> fileToFilm(List<File> filesFilms);
-	void saveAllNewFilms();
+	List<Film> saveAllNewFilms();
+	List<String> getAllTitlesFilm();
+	List<Film> getIdImdb(List<Film> films);
+	List<Film> getTMDBInfos(List<Film> films);
 }

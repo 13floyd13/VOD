@@ -16,8 +16,11 @@ public interface GenreService {
 	Genre saveGenre(Genre g);
 	Genre updateGenre(Genre g);
 	void deleteGenre(Genre g);
-	void deleteFilmById(Long id);
+	void deleteGenreById(Long id);
 	Genre getGenre(Long id);
 	List<Genre> getAllGenres();
+	List<String> getAllNameGenre();
+	Genre findGenreByName(String name);
+	List<Genre> getAllTMDBGenres();
 
 }

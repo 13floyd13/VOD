@@ -15,7 +15,6 @@ import com.forrest.cinema.entities.Genre;
  * @author martin
  *
  */
-
 public interface GenreRepository extends JpaRepository<Genre, Long>{
 
 	@Query("SELECT g.nameGenre FROM Genre g")

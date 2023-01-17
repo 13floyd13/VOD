@@ -82,7 +82,8 @@ class FilmsLibraryApplicationTests {
 	@SuppressWarnings("unused")
 	@Test
 	public void testGetAllFilmFromRepo() {
-		List<File> files = filmService.getAllFilesInRepository();
+		//List<File> files = filmService.getAllFilesInRepository();
+		List<Film> films = filmService.getAllFilms();
 	}
 	
 	@Test
