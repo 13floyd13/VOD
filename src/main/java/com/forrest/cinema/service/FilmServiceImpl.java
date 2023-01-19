@@ -110,8 +110,8 @@ public class FilmServiceImpl implements FilmService {
 		
 		for (File file : filesFilms) {
 			Film film = new Film();
-			film.setTitleFilm(CinemaUtilities.removeExtension(file.getName()));
-			film.setPath(file.getAbsolutePath());
+			film.setTitleFilm(CinemaUtilities.removeExtension(CinemaUtilities.getStringLimited(file.getName(), 255)));
+			film.setPath(CinemaUtilities.getStringLimited(file.getAbsolutePath(), 500));
 			film.setSize(CinemaUtilities.convertSizeFileToGigabytes(file));
 			films.add(film);
 		}		
@@ -211,20 +211,16 @@ public class FilmServiceImpl implements FilmService {
 				MovieTMDB movie = movieMono.block();
 				
 				if(movie != null) {
-					film.setOriginalTitleFilm(movie.getOriginal_title());
+					film.setOriginalTitleFilm(CinemaUtilities.getStringLimited(movie.getOriginal_title(), 255));
 					film.setYearFilm(movie.getRelease_date());
-					if (movie.getOverview().length() > 255) {
-						film.setSynopsisFilm(movie.getOverview().substring(0, 255));
-					}else {
-						film.setSynopsisFilm(movie.getOverview());
-					}
+					film.setSynopsisFilm(CinemaUtilities.getStringLimited(movie.getOverview(), 1000));
 					
-					film.setPosterFilm(movie.getPoster_path());
+					film.setPosterFilm(CinemaUtilities.getStringLimited(movie.getPoster_path(), 255));
 					film.setTmdbRatingFilm(movie.getVote_average());
 					film.setBudget(movie.getBudget());
 					film.setRevenue(movie.getRevenue());
-					film.setOriginalLanguage(movie.getOriginal_language());
-					film.setTagline(movie.getTagline());
+					film.setOriginalLanguage(CinemaUtilities.getStringLimited(movie.getOriginal_language(), 255));
+					film.setTagline(CinemaUtilities.getStringLimited(movie.getTagline(), 255));
 					film.setVoteCount(movie.getVote_count());;
 								
 					movie.getGenres().stream().forEach(genreName->{
@@ -238,7 +234,7 @@ public class FilmServiceImpl implements FilmService {
 					
 					//Add only one production
 					if(movie.getProduction_companies().size() > 0) {
-						film.setProductionFilm(movie.getProduction_companies().get(0).getName());
+						film.setProductionFilm(CinemaUtilities.getStringLimited(movie.getProduction_companies().get(0).getName(), 255));
 					}
 				}
 			} catch (ApiTMDBException e){

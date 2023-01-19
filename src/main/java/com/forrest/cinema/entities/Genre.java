@@ -33,7 +33,9 @@ public class Genre implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id_genre")
 	private Long idGenre;
+	@Column(length = 255)
 	private String nameGenre;
+	@Column(length = 255)
 	private String descriptionGenre;
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -6,11 +6,16 @@ package com.forrest.cinema.utils;
 import java.io.File;
 import java.util.Arrays;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 /**
  * @author martin
  *
  */
 public final class CinemaUtilities {
+	
+	private static final Logger Logger = LoggerFactory.getLogger(CinemaUtilities.class);
 
 	public static int getLevenshteinDistance(String str1, String str2) {
 		String regexAlphaNum = "[^a-zA-Z0-9]";
@@ -92,5 +97,15 @@ public final class CinemaUtilities {
 		} else {
 			return str.substring(0, lastPointPosition);
 		}
+	}
+	
+	public static String getStringLimited(String str, int maxLength) {
+		
+		if (str.length() > maxLength) {
+			Logger.warn("STRING_TOO_LONG : " + str + "MAX_LENGTH : " + maxLength);
+			return str.substring(0, maxLength);
+		}
+		
+		return str;
 	}
 }

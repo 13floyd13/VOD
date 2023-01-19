@@ -14,6 +14,7 @@ import com.forrest.cinema.entities.Genre;
 import com.forrest.cinema.entities.GenreTMDB;
 import com.forrest.cinema.entities.GenresTMDB;
 import com.forrest.cinema.repos.GenreRepository;
+import com.forrest.cinema.utils.CinemaUtilities;
 import com.google.gson.Gson;
 
 import reactor.core.publisher.Mono;
@@ -85,7 +86,7 @@ public class GenreServiceImpl implements GenreService {
 
 		for (GenreTMDB genreTMDB : genres.getGenresTMDB()) {
 			Genre genre = new Genre();
-			genre.setNameGenre(genreTMDB.getName());
+			genre.setNameGenre(CinemaUtilities.getStringLimited(genreTMDB.getName(), 255));
 			genresList.add(genre);
 		}
 		

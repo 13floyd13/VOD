@@ -31,28 +31,47 @@ public class Film implements Serializable {
 	@Column(name="id_film")
 	private Long idFilm;
 	
+	@Column(length = 255)
 	private String titleFilm;
+	@Column(length = 255)
 	private String officialTitleFilm;
+	@Column(length = 255)
 	private String originalTitleFilm;
+	@Column(length = 255)
 	private String idImdb;
+	@Column(length = 255)
 	private String yearFilm;
 	private int runtimeFilm;
+	@Column(length = 255)
 	private String directorFilm;
+	@Column(length = 255)
 	private String writerFilm;
 	private ArrayList<String> actorsFilm;
+	
+	@Column(name = "synopsis_film", length = 1000)
 	private String synopsisFilm;
+	@Column(length = 255)
 	private String countryFilm;
+	@Column(length = 255)
 	private String awardsFilms;
+	@Column(length = 255)
 	private String posterFilm;
+	@Column(length = 255)
 	private Long tmdbRatingFilm;
+	@Column(length = 255)
 	private String typeFilm;
 	private Long budget;
 	private Long revenue;
+	@Column(length = 255)
 	private String originalLanguage;
+	@Column(length = 255)
 	private String tagline;
+	@Column(length = 255)
 	private String productionFilm;
+	@Column(length = 255)
 	private String languagesFilm;
 	private int distanceTitleToOfficialTitle;
+	@Column(length = 500)
 	private String path;
 	private double size;
 	private Integer voteCount;
