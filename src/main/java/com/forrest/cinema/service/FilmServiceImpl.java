@@ -6,7 +6,10 @@ package com.forrest.cinema.service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -243,5 +246,37 @@ public class FilmServiceImpl implements FilmService {
 			updatedFilms.add(film);
 		}
 		return updatedFilms;
+	}
+	
+	@Override
+	public List<Film> checkPathsFilms() {
+		List<Film> updatedFilm = new ArrayList<>();
+		List<Film> allFilms = this.getAllFilms();
+		List<File> allFiles = fileRepository.getAllFilesInDirectory(filmRepoPath);
+		Map<String, File> filesTitle = new HashMap<>();
+		
+		for (File file : allFiles) {
+			filesTitle.put(CinemaUtilities.removeExtension(file.getName()), file);			
+		}
+		
+		List<Film> differentFilms = allFilms.stream()
+                .filter(film -> allFiles.stream()
+                                    .noneMatch(file -> film.getPath().equals(file.getPath())))
+                .collect(Collectors.toList());
+		
+		for (Film film : differentFilms) {
+
+			File file = filesTitle.get(film.getTitleFilm());
+
+			if (!file.getPath().equals(film.getPath())) {
+				Logger.info("Film : " + film.getTitleFilm());
+				Logger.info("Ancien path : " + film.getPath());
+				Logger.info("Nouveau Path : " + file.getPath());
+				
+				film.setPath(file.getPath());
+				//updatedFilm.add(film);
+			}	
+		}
+		return updatedFilm;
 	}
 }

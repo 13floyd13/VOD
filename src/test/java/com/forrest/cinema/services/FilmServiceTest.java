@@ -13,10 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.forrest.cinema.entities.Film;
 import com.forrest.cinema.entities.Genre;
+import com.forrest.cinema.repos.FileRepository;
 import com.forrest.cinema.repos.FilmRepository;
 import com.forrest.cinema.service.FilmServiceImpl;
 
@@ -25,10 +27,16 @@ import com.forrest.cinema.service.FilmServiceImpl;
 public class FilmServiceTest {
 
     @InjectMocks
-    FilmServiceImpl filmService;
+    FilmServiceImpl filmServiceMock;
 
     @Mock
-    FilmRepository filmRepository;
+    FilmRepository filmRepositoryMock;
+    
+    @Autowired
+	FileRepository fileRepository;
+    
+    @Autowired
+    FilmServiceImpl filmService;
 
     @Test
     public void saveFilmTest() {
@@ -36,9 +44,9 @@ public class FilmServiceTest {
         film.setTitleFilm("Film Title");
         film.setDirectorFilm("Film Director");
         // Configure le comportement du mock pour qu'il retourne l'objet film lorsque la méthode save() est appelée
-        Mockito.when(filmRepository.save(film)).thenReturn(film);
+        Mockito.when(filmRepositoryMock.save(film)).thenReturn(film);
         // Appeler la méthode saveFilm() qui utilise le mock
-        Film savedFilm = filmService.saveFilm(film);
+        Film savedFilm = filmServiceMock.saveFilm(film);
         // Vérifie que le service retourne le film attendu
         assertEquals(film, savedFilm);
     }
@@ -50,9 +58,9 @@ public class FilmServiceTest {
         film.setTitleFilm("Film Title");
         film.setDirectorFilm("Film Director");
         // Configure le comportement du mock pour qu'il retourne l'objet film lorsque la méthode save() est appelée
-        Mockito.when(filmRepository.save(film)).thenReturn(film);
+        Mockito.when(filmRepositoryMock.save(film)).thenReturn(film);
         // Appeler la méthode updateFilm() qui utilise le mock
-        Film updatedFilm = filmService.updateFilm(film);
+        Film updatedFilm = filmServiceMock.updateFilm(film);
         // Vérifie que le service retourne le film attendu
         assertEquals(film, updatedFilm);
     }
@@ -64,18 +72,18 @@ public class FilmServiceTest {
         film.setTitleFilm("Film Title");
         film.setDirectorFilm("Film Director");
         // Appeler la méthode deleteFilm() qui utilise le mock
-        filmService.deleteFilm(film);
+        filmServiceMock.deleteFilm(film);
         // Vérifie que le mock a bien reçu l'appel de la méthode delete() avec l'objet film en paramètre
-        Mockito.verify(filmRepository, Mockito.times(1)).delete(film);
+        Mockito.verify(filmRepositoryMock, Mockito.times(1)).delete(film);
     }
 
     @Test
     public void deleteFilmByIdTest() {
         Long id = 1L;
         // Appeler la méthode deleteFilmById() qui utilise le mock
-        filmService.deleteFilmById(id);
+        filmServiceMock.deleteFilmById(id);
         // Vérifie que le mock a bien reçu l'appel de la méthode deleteById() avec l'id en paramètre
-        Mockito.verify(filmRepository, Mockito.times(1)).deleteById(id);
+        Mockito.verify(filmRepositoryMock, Mockito.times(1)).deleteById(id);
     }
     
     @Test
@@ -87,9 +95,9 @@ public class FilmServiceTest {
         film.setDirectorFilm("Film Director");
         // Configure le comportement du mock pour qu'il retourne l'objet film lorsque la méthode findById() est appelée
         Optional<Film> optionalFilm = Optional.of(film);
-        Mockito.when(filmRepository.findById(id)).thenReturn(optionalFilm);
+        Mockito.when(filmRepositoryMock.findById(id)).thenReturn(optionalFilm);
         // Appeler la méthode getFilm() qui utilise le mock
-        Film returnedFilm = filmService.getFilm(id);
+        Film returnedFilm = filmServiceMock.getFilm(id);
         // Vérifie que le service retourne le film attendu
         assertEquals(film, returnedFilm);
     }
@@ -100,17 +108,17 @@ public class FilmServiceTest {
         films.add(new Film());
         films.add(new Film());
         films.add(new Film());
-        Mockito.when(filmRepository.findAll()).thenReturn(films);
-        assertEquals(3, filmService.getAllFilms().size());
+        Mockito.when(filmRepositoryMock.findAll()).thenReturn(films);
+        assertEquals(3, filmServiceMock.getAllFilms().size());
     }
     
     @Test
     public void getAllTitlesFilmTest() {
         List<String> titles = Arrays.asList("Film Title 1", "Film Title 2");
         // Configurer le comportement du mock pour qu'il retourne la liste de titres de films lorsque la méthode findAllFilmsTitle() est appelée
-        Mockito.when(filmRepository.findAllFilmsTitle()).thenReturn(titles);
+        Mockito.when(filmRepositoryMock.findAllFilmsTitle()).thenReturn(titles);
         // Appeler la méthode getAllTitlesFilm() qui utilise le mock
-        List<String> returnedTitles = filmService.getAllTitlesFilm();
+        List<String> returnedTitles = filmServiceMock.getAllTitlesFilm();
         // Vérifie que le service retourne la liste de titres attendue
         assertEquals(titles, returnedTitles);
     }
@@ -129,9 +137,9 @@ public class FilmServiceTest {
         films.add(film1);
 
         // Configurer le comportement du mock pour qu'il retourne la liste de films de genre "genre" lorsque la méthode findAllFilmsByGenre() est appelée avec "genre" en paramètre
-        Mockito.when(filmRepository.findAllFilmsByGenre(genreName)).thenReturn(films);
+        Mockito.when(filmRepositoryMock.findAllFilmsByGenre(genreName)).thenReturn(films);
         // Appeler la méthode getAllFilmsByGenre() qui utilise le mock
-        List<Film> returnedFilms = filmService.getAllFilmsByGenre(genreName);
+        List<Film> returnedFilms = filmServiceMock.getAllFilmsByGenre(genreName);
         // Vérifie que le service retourne la liste de films de genre "genre" attendue
         assertEquals(films, returnedFilms);
     }
@@ -150,18 +158,23 @@ public class FilmServiceTest {
         film2.setDirectorFilm("Film Director 2");
         films.add(film2);
         // Configurer le comportement du mock pour qu'il retourne la liste de films lorsque la méthode saveAll() est appelée avec cette liste en paramètre
-        Mockito.when(filmRepository.saveAll(films)).thenReturn(films);
+        Mockito.when(filmRepositoryMock.saveAll(films)).thenReturn(films);
         // Appeler la méthode saveAllFilms() qui utilise le mock
-        List<Film> returnedFilms = filmService.saveAllFilms(films);
+        List<Film> returnedFilms = filmServiceMock.saveAllFilms(films);
         // Vérifie que le service retourne la liste de films attendue
         assertEquals(films, returnedFilms);
     }
     
     @Test
     public void testGetIdImdbInURL() {
-        FilmServiceImpl filmService = new FilmServiceImpl();
         String url = "https://www.imdb.com/title/tt0295736/?ref_=fn_al_tt_1";
         String expectedId = "tt0295736";
-        assertEquals(expectedId, filmService.getIdImdbInURL(url));
+        assertEquals(expectedId, filmServiceMock.getIdImdbInURL(url));
     }
+    
+    @Test 
+    public void checkPathsFilms() {
+    	filmService.checkPathsFilms();
+    }
+    
 }

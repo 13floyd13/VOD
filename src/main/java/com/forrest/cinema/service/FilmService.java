@@ -27,4 +27,5 @@ public interface FilmService {
 	List<String> getAllTitlesFilm();
 	List<Film> getIdImdb(List<Film> films);
 	List<Film> getTMDBInfos(List<Film> films);
+	List<Film> checkPathsFilms();
 }

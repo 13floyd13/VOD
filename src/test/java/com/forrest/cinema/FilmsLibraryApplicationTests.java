@@ -5,19 +5,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
 
 import com.forrest.cinema.entities.Film;
 import com.forrest.cinema.entities.Genre;
+import com.forrest.cinema.repos.FileRepository;
 import com.forrest.cinema.repos.FilmRepository;
 import com.forrest.cinema.repos.GenreRepository;
 import com.forrest.cinema.service.FilmServiceImpl;
 
 
+
 @SpringBootTest
 class FilmsLibraryApplicationTests {
+	
+	private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(FilmsLibraryApplicationTests.class);
 	
 	@Autowired
 	private FilmRepository filmRepository;
@@ -27,6 +33,12 @@ class FilmsLibraryApplicationTests {
 	
 	@Autowired
 	private FilmServiceImpl filmService;
+	
+	@Value("${film-repository.path}")
+	private String filmRepoPath;
+	
+	@Autowired
+	FileRepository fileRepository;
 	
 //	@Autowired
 //	private RestTMDBController restTMDBController;
@@ -82,14 +94,24 @@ class FilmsLibraryApplicationTests {
 	@SuppressWarnings("unused")
 	@Test
 	public void testGetAllFilmFromRepo() {
-		//List<File> files = filmService.getAllFilesInRepository();
-		List<Film> films = filmService.getAllFilms();
+		List<File> allFiles = fileRepository.getAllFilesInDirectory(filmRepoPath);
+		List<Film> allFilms = filmRepository.findAll();//getAllFilms();
+		
+		System.out.println(allFilms.size());
 	}
 	
 	@Test
 	public void testSaveAllNewFilms() {
-		filmRepository.deleteAll();
-		filmService.saveAllNewFilms();	
+		//filmRepository.deleteAll();
+		//filmService.saveAllNewFilms();
+		List<String> allFilms = filmService.getAllTitlesFilm();
+		List<File> files = fileRepository.getNewFilesInDirectory(filmRepoPath, allFilms);
+		
+		for (File file : files) {
+			System.out.println(file.getName());
+			Logger.info(file.getName());
+			Logger.warn("SALUT");
+		}
 	}
 	
 	@Test

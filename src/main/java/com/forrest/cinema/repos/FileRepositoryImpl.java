@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.forrest.cinema.utils.CinemaUtilities;
+
 /**
  * @author martin
  *
@@ -47,7 +49,7 @@ public class FileRepositoryImpl implements FileRepository {
 		List<File> newFiles = new ArrayList<>();
 		
 		for (File file : allFilesInDirectory) {
-			if (!actualFilesTitle.contains(file.getName())) {
+			if (!actualFilesTitle.contains(CinemaUtilities.removeExtension(file.getName()))) {
 				newFiles.add(file);
 			}
 		}
