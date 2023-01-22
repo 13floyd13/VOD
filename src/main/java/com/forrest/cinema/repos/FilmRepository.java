@@ -18,4 +18,10 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
 	
 	@Query("SELECT f FROM Film f WHERE idImdb IS NULL OR idImdb = '' ")
 	List<Film> findAllFilmsWithoutIdImdb();
+	
+	@Query("SELECT f.titleFilm FROM Film f GROUP BY f.titleFilm HAVING COUNT(f.titleFilm) > 1")
+	List<String> findDuplicateFilm();
+
+	@Query("SELECT f FROM Film f WHERE f.titleFilm = :titleFilm")
+	List<Film> findByTitleFilm(@Param("titleFilm") String titleFilm);
 }

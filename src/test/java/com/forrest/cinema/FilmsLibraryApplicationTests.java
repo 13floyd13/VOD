@@ -104,14 +104,16 @@ class FilmsLibraryApplicationTests {
 	public void testSaveAllNewFilms() {
 		//filmRepository.deleteAll();
 		//filmService.saveAllNewFilms();
-		List<String> allFilms = filmService.getAllTitlesFilm();
-		List<File> files = fileRepository.getNewFilesInDirectory(filmRepoPath, allFilms);
+//		List<String> allFilms = filmService.getAllTitlesFilm();
+//		List<File> files = fileRepository.getNewFilesInDirectory(filmRepoPath, allFilms);
+//		
+//		for (File file : files) {
+//			System.out.println(file.getName());
+//			Logger.info(file.getName());
+//		}
 		
-		for (File file : files) {
-			System.out.println(file.getName());
-			Logger.info(file.getName());
-			Logger.warn("SALUT");
-		}
+		List<Film> films = filmService.saveAllNewFilms();
+		System.out.println(films.size());
 	}
 	
 	@Test
@@ -125,6 +127,16 @@ class FilmsLibraryApplicationTests {
 		films = filmService.getTMDBInfos(films);
 		
 		filmService.saveAllFilms(films);
+	}
+	
+	@Test
+	public void testDuplicate() {
+		filmService.findDuplicateFilms();
+	}
+	
+	@Test
+	public void testFindFilmWithPathDeleted() {
+		filmService.findFilmWithPathDeleted();
 	}
 
 }

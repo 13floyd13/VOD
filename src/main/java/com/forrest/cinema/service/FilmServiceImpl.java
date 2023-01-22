@@ -127,9 +127,10 @@ public class FilmServiceImpl implements FilmService {
 		List<String> actualTitles = this.getAllTitlesFilm();
 		List<File> newFiles = fileRepository.getNewFilesInDirectory(filmRepoPath, actualTitles);
 		List<Film> newFilms = this.fileToFilm(newFiles);
-		this.getIdImdb(newFilms);
+		//this.getIdImdb(newFilms);
 		//this.getTMDBInfos(newFilms);
-		return this.saveAllFilms(newFilms);		
+		//return this.saveAllFilms(newFilms);	
+		return newFilms;
 	}
 	
 	@Override
@@ -274,9 +275,49 @@ public class FilmServiceImpl implements FilmService {
 				Logger.info("Nouveau Path : " + file.getPath());
 				
 				film.setPath(file.getPath());
-				//updatedFilm.add(film);
+				updatedFilm.add(film);
+				this.updateFilm(film);
 			}	
 		}
 		return updatedFilm;
+	}
+
+	@Override
+	public List<Film> findByTitleFilm(String titleFilm) {
+		return filmRepository.findByTitleFilm(titleFilm);
+	}
+	
+	public List<Film> findDuplicateFilms() {
+		List<String> duplicateTitle = new ArrayList<>();
+		List<Film> duplicateFilms = new ArrayList<>();
+		duplicateTitle = filmRepository.findDuplicateFilm();
+		
+		for (String title : duplicateTitle) {
+			duplicateFilms.addAll(filmRepository.findByTitleFilm(title));
+			Logger.info("DUPLICATE_FILM : " + title);
+		}
+		
+		for (int i = 1 ; i < duplicateFilms.size(); i++) {
+			System.out.println(duplicateFilms.get(i).getTitleFilm());
+			//this.deleteFilm(duplicateFilms.get(i));
+		}
+
+		return duplicateFilms;	
+	}
+	
+	public List<Film> findFilmWithPathDeleted(){
+		List<Film> films = this.getAllFilms();
+		List<Film> filmsToDelete = new ArrayList<>();
+		
+		for(Film film : films) {
+			File file = new File(film.getPath());
+			
+			if(!file.exists()) {
+				filmsToDelete.add(film);
+				System.out.println(film.getTitleFilm());
+				//this.deleteFilm(film);
+			}
+		}
+		return filmsToDelete;
 	}
 }

@@ -41,7 +41,8 @@ public class Film implements Serializable {
 	private String idImdb;
 	@Column(length = 255)
 	private String yearFilm;
-	private int runtimeFilm;
+	@Column(nullable = true)
+	private Integer runtimeFilm;
 	@Column(length = 255)
 	private String directorFilm;
 	@Column(length = 255)
@@ -60,7 +61,9 @@ public class Film implements Serializable {
 	private Long tmdbRatingFilm;
 	@Column(length = 255)
 	private String typeFilm;
+	@Column(nullable = true)
 	private Long budget;
+	@Column(nullable = true)
 	private Long revenue;
 	@Column(length = 255)
 	private String originalLanguage;
@@ -70,11 +73,15 @@ public class Film implements Serializable {
 	private String productionFilm;
 	@Column(length = 255)
 	private String languagesFilm;
-	private int distanceTitleToOfficialTitle;
+	@Column(nullable = true)
+	private Integer distanceTitleToOfficialTitle;
 	@Column(length = 500)
 	private String path;
+	@Column(nullable = true)
 	private double size;
 	private Integer voteCount;
+	@Column(nullable = true)
+	private Boolean seen;
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(
@@ -188,14 +195,14 @@ public class Film implements Serializable {
 	/**
 	 * @return the runtimeFilm
 	 */
-	public int getRuntimeFilm() {
+	public Integer getRuntimeFilm() {
 		return runtimeFilm;
 	}
 
 	/**
 	 * @param runtimeFilm the runtimeFilm to set
 	 */
-	public void setRuntimeFilm(int runtimeFilm) {
+	public void setRuntimeFilm(Integer runtimeFilm) {
 		this.runtimeFilm = runtimeFilm;
 	}
 
@@ -412,14 +419,14 @@ public class Film implements Serializable {
 	/**
 	 * @return the distanceTitleToOfficialTitle
 	 */
-	public int getDistanceTitleToOfficialTitle() {
+	public Integer getDistanceTitleToOfficialTitle() {
 		return distanceTitleToOfficialTitle;
 	}
 
 	/**
 	 * @param distanceTitleToOfficialTitle the distanceTitleToOfficialTitle to set
 	 */
-	public void setDistanceTitleToOfficialTitle(int distanceTitleToOfficialTitle) {
+	public void setDistanceTitleToOfficialTitle(Integer distanceTitleToOfficialTitle) {
 		this.distanceTitleToOfficialTitle = distanceTitleToOfficialTitle;
 	}
 
@@ -491,9 +498,30 @@ public class Film implements Serializable {
 	 * @return
 	 * @see java.util.List#add(java.lang.Object)
 	 */
-	public boolean add(Genre e) {
+	public Boolean add(Genre e) {
 		return genres.add(e);
 	}
+
+	/**
+	 * @return the seen
+	 */
+	public Boolean isSeen() {
+		return seen;
+	}
+
+	/**
+	 * @param seen the seen to set
+	 */
+	public void setSeen(Boolean seen) {
+		this.seen = seen;
+	}
+
+	@Override
+	public String toString() {
+		return "Film [titleFilm=" + titleFilm + "]";
+	}
+	
+	
 
 
 }
