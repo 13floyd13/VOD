@@ -59,8 +59,6 @@ public class Film implements Serializable {
 	private String posterFilm;
 	@Column(length = 255)
 	private Long tmdbRatingFilm;
-	@Column(length = 255)
-	private String typeFilm;
 	@Column(nullable = true)
 	private Long budget;
 	@Column(nullable = true)
@@ -82,6 +80,7 @@ public class Film implements Serializable {
 	private Integer voteCount;
 	@Column(nullable = true)
 	private Boolean seen;
+	private String posterPath;
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(
@@ -319,20 +318,6 @@ public class Film implements Serializable {
 	}
 
 	/**
-	 * @return the typeFilm
-	 */
-	public String getTypeFilm() {
-		return typeFilm;
-	}
-
-	/**
-	 * @param typeFilm the typeFilm to set
-	 */
-	public void setTypeFilm(String typeFilm) {
-		this.typeFilm = typeFilm;
-	}
-
-	/**
 	 * @return the budget
 	 */
 	public Long getBudget() {
@@ -514,6 +499,27 @@ public class Film implements Serializable {
 	 */
 	public void setSeen(Boolean seen) {
 		this.seen = seen;
+	}
+	
+	/**
+	 * @return the seen
+	 */
+	public Boolean getSeen() {
+		return seen;
+	}
+
+	/**
+	 * @return the posterPath
+	 */
+	public String getPosterPath() {
+		return posterPath;
+	}
+
+	/**
+	 * @param posterPath the posterPath to set
+	 */
+	public void setPosterPath(String posterPath) {
+		this.posterPath = posterPath;
 	}
 
 	@Override

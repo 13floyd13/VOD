@@ -61,8 +61,4 @@ public class ProductionCompagnyTMDB {
 	public void setOrigin_country(String origin_country) {
 		this.origin_country = origin_country;
 	}
-	
-	
-	
-	
 }

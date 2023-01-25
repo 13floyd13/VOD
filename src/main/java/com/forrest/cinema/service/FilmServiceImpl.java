@@ -27,6 +27,8 @@ import com.forrest.cinema.controller.RestTMDBController;
 import com.forrest.cinema.entities.Film;
 import com.forrest.cinema.entities.Genre;
 import com.forrest.cinema.entities.MovieTMDB;
+import com.forrest.cinema.entities.ProductionCompagnyTMDB;
+import com.forrest.cinema.entities.ProductionCountryTMDB;
 import com.forrest.cinema.exceptions.ApiTMDBException;
 import com.forrest.cinema.repos.FileRepository;
 import com.forrest.cinema.repos.FilmRepository;
@@ -219,13 +221,26 @@ public class FilmServiceImpl implements FilmService {
 					film.setYearFilm(movie.getRelease_date());
 					film.setSynopsisFilm(CinemaUtilities.getStringLimited(movie.getOverview(), 1000));
 					
-					film.setPosterFilm(CinemaUtilities.getStringLimited(movie.getPoster_path(), 255));
+					String titleFilm = film.getTitleFilm();
+					String poster = movie.getPoster_path();
+					film.setPosterFilm(CinemaUtilities.getStringLimited(poster, 255));
+					
+					String posterPath = restTMDBController.getPoster(poster, titleFilm);
+					film.setPosterPath(posterPath);
 					film.setTmdbRatingFilm(movie.getVote_average());
 					film.setBudget(movie.getBudget());
 					film.setRevenue(movie.getRevenue());
 					film.setOriginalLanguage(CinemaUtilities.getStringLimited(movie.getOriginal_language(), 255));
 					film.setTagline(CinemaUtilities.getStringLimited(movie.getTagline(), 255));
 					film.setVoteCount(movie.getVote_count());;
+					film.setRuntimeFilm(movie.getRuntime());
+					
+					String countries = "";
+					for (ProductionCountryTMDB productionCountry : movie.getProduction_countries()) {
+						countries += productionCountry.getName();
+						countries += " / ";
+					}
+					film.setCountryFilm(CinemaUtilities.getStringLimited(countries, 255));
 								
 					movie.getGenres().stream().forEach(genreName->{
 					    Genre genre = genres.stream().filter(g->g.getNameGenre().equals(genreName.getName())).findFirst().orElse(null);
@@ -236,10 +251,15 @@ public class FilmServiceImpl implements FilmService {
 					
 					film.setGenres(newGenres);
 					
-					//Add only one production
-					if(movie.getProduction_companies().size() > 0) {
-						film.setProductionFilm(CinemaUtilities.getStringLimited(movie.getProduction_companies().get(0).getName(), 255));
+
+					String productions = "";
+					for (ProductionCompagnyTMDB prod : movie.getProduction_companies()) {
+						productions += prod.getName();
+						productions += " ";
+						productions += prod.getOrigin_country();
+						productions += " / ";
 					}
+						film.setProductionFilm(CinemaUtilities.getStringLimited(productions, 255));
 				}
 			} catch (ApiTMDBException e){
 				Logger.error("API_TMDB_EXCEPTION", e);

@@ -18,11 +18,10 @@ import com.forrest.cinema.repos.FilmRepository;
 import com.forrest.cinema.repos.GenreRepository;
 import com.forrest.cinema.service.FilmServiceImpl;
 
-
-
 @SpringBootTest
 class FilmsLibraryApplicationTests {
 	
+	@SuppressWarnings("unused")
 	private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(FilmsLibraryApplicationTests.class);
 	
 	@Autowired
@@ -138,5 +137,9 @@ class FilmsLibraryApplicationTests {
 	public void testFindFilmWithPathDeleted() {
 		filmService.findFilmWithPathDeleted();
 	}
-
+	
+	@Test
+	public void testGetPoster() {
+		//filmService.getPoster("https://image.tmdb.org/t/p/original/lZiGVzM1j2HdXNjXsGOjy9YIVTW.jpg");
+    }
 }

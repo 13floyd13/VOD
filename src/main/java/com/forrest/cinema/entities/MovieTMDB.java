@@ -20,9 +20,10 @@ public class MovieTMDB {
 	private Long popularity;
 	private String poster_path;
 	private List<ProductionCompagnyTMDB> production_companies;
+	private List<ProductionCountryTMDB> production_countries;
 	private String release_date;
 	private Long revenue;
-	private Integer runTime;
+	private Integer runtime;
 	private String status;
 	private String tagline;
 	private String title;
@@ -172,14 +173,14 @@ public class MovieTMDB {
 	/**
 	 * @return the runTime
 	 */
-	public Integer getRunTime() {
-		return runTime;
+	public Integer getRuntime() {
+		return runtime;
 	}
 	/**
 	 * @param runTime the runTime to set
 	 */
-	public void setRunTime(Integer runTime) {
-		this.runTime = runTime;
+	public void setRuntime(Integer runTime) {
+		this.runtime = runTime;
 	}
 	/**
 	 * @return the status
@@ -240,6 +241,20 @@ public class MovieTMDB {
 	 */
 	public void setVote_count(Integer vote_count) {
 		this.vote_count = vote_count;
+	}
+
+	/**
+	 * @return the production_countries
+	 */
+	public List<ProductionCountryTMDB> getProduction_countries() {
+		return production_countries;
+	}
+
+	/**
+	 * @param production_countries the production_countries to set
+	 */
+	public void setProduction_countries(List<ProductionCountryTMDB> production_countries) {
+		this.production_countries = production_countries;
 	}
 
 	@Override
