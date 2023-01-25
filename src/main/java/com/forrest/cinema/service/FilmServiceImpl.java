@@ -26,9 +26,12 @@ import org.slf4j.LoggerFactory;
 import com.forrest.cinema.controller.RestTMDBController;
 import com.forrest.cinema.entities.Film;
 import com.forrest.cinema.entities.Genre;
-import com.forrest.cinema.entities.MovieTMDB;
-import com.forrest.cinema.entities.ProductionCompagnyTMDB;
-import com.forrest.cinema.entities.ProductionCountryTMDB;
+import com.forrest.cinema.entities.tmdb.CastTMDB;
+import com.forrest.cinema.entities.tmdb.CreditsTMDB;
+import com.forrest.cinema.entities.tmdb.CrewTMDB;
+import com.forrest.cinema.entities.tmdb.MovieTMDB;
+import com.forrest.cinema.entities.tmdb.ProductionCompagnyTMDB;
+import com.forrest.cinema.entities.tmdb.ProductionCountryTMDB;
 import com.forrest.cinema.exceptions.ApiTMDBException;
 import com.forrest.cinema.repos.FileRepository;
 import com.forrest.cinema.repos.FilmRepository;
@@ -213,9 +216,10 @@ public class FilmServiceImpl implements FilmService {
 		for (Film film : films) {
 			List<Genre> newGenres = new ArrayList<>();
 			try {
-				Mono<MovieTMDB> movieMono = restTMDBController.getInfosFromApiTMDB(film.getIdImdb());
+				Mono<MovieTMDB> movieMono = restTMDBController.getInfosFromApiTMDB(film.getIdImdb());		
 				MovieTMDB movie = movieMono.block();
-				
+				Mono<CreditsTMDB> creditsMono = restTMDBController.getCreditsFilmsTMDB(film.getIdImdb());
+				CreditsTMDB credits = creditsMono.block();
 				if(movie != null) {
 					film.setOriginalTitleFilm(CinemaUtilities.getStringLimited(movie.getOriginal_title(), 255));
 					film.setYearFilm(movie.getRelease_date());
@@ -261,6 +265,42 @@ public class FilmServiceImpl implements FilmService {
 					}
 						film.setProductionFilm(CinemaUtilities.getStringLimited(productions, 255));
 				}
+				
+				if (credits != null) {
+					// get only 20 actors
+					int limit = 20;
+					List<CastTMDB> castList = new ArrayList<>();
+					if (credits.getCast().size() > 20) {
+						castList = credits.getCast().subList(0, limit);
+					} else {
+						castList = credits.getCast();
+					}
+					
+					List<String> actors = new ArrayList<>();
+					
+					for (CastTMDB cast : castList) {
+						if (cast.getName() != null) {
+							actors.add(cast.getName());
+							//film.addActor(cast.getName());
+						}					
+					}
+					film.setActorsFilm(actors);
+					
+					List<CrewTMDB> crewList = credits.getCrew();
+					
+					for (CrewTMDB crew : crewList) {
+						if (crew.getJob().equalsIgnoreCase("Director") && crew.getDepartment().equalsIgnoreCase("Directing")) {
+							film.setDirectorFilm(crew.getName());
+						}
+						
+						if (crew.getJob().equalsIgnoreCase("Story") && crew.getDepartment().equalsIgnoreCase("Writing")) {
+							film.setWriterFilm(crew.getName());
+						}
+					}				
+					
+				}
+				
+				
 			} catch (ApiTMDBException e){
 				Logger.error("API_TMDB_EXCEPTION", e);
 			}

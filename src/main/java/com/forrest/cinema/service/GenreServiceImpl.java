@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.forrest.cinema.controller.RestTMDBController;
 import com.forrest.cinema.entities.Genre;
-import com.forrest.cinema.entities.GenreTMDB;
-import com.forrest.cinema.entities.GenresTMDB;
+import com.forrest.cinema.entities.tmdb.GenreTMDB;
+import com.forrest.cinema.entities.tmdb.GenresTMDB;
 import com.forrest.cinema.repos.GenreRepository;
 import com.forrest.cinema.utils.CinemaUtilities;
 import com.google.gson.Gson;

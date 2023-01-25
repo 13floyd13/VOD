@@ -24,14 +24,14 @@ import com.forrest.cinema.service.FilmService;
  *
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/films")
 @CrossOrigin
 public class FilmRESTController {
 	
 	@Autowired
 	FilmService filmService;
 
-	@PostMapping
+	@PostMapping("/createfilm")
 	public Film createFilm(@RequestBody Film film) {
 		return filmService.saveFilm(film);
 	}

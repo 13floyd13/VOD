@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.forrest.cinema.entities;
+package com.forrest.cinema.entities.tmdb;
 
 import java.util.List;
 

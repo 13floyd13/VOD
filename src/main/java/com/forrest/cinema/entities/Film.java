@@ -47,7 +47,8 @@ public class Film implements Serializable {
 	private String directorFilm;
 	@Column(length = 255)
 	private String writerFilm;
-	private ArrayList<String> actorsFilm;
+	@Column(nullable = true)
+	private List<String> actorsFilm;
 	
 	@Column(name = "synopsis_film", length = 1000)
 	private String synopsisFilm;
@@ -80,6 +81,7 @@ public class Film implements Serializable {
 	private Integer voteCount;
 	@Column(nullable = true)
 	private Boolean seen;
+	@Column(length = 255)
 	private String posterPath;
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -236,15 +238,24 @@ public class Film implements Serializable {
 	/**
 	 * @return the actorsFilm
 	 */
-	public ArrayList<String> getActorsFilm() {
+	public List<String> getActorsFilm() {
 		return actorsFilm;
 	}
 
 	/**
-	 * @param actorsFilm the actorsFilm to set
+	 * @param actors the actorsFilm to set
 	 */
-	public void setActorsFilm(ArrayList<String> actorsFilm) {
-		this.actorsFilm = actorsFilm;
+	public void setActorsFilm(List<String> actors) {
+		this.actorsFilm = actors;
+	}
+	
+
+	/**
+	 * @param e
+	 * @see java.util.ArrayList#add(java.lang.Object)
+	 */
+	public void addActor(String actor) {
+		actorsFilm.add(actor);
 	}
 
 	/**

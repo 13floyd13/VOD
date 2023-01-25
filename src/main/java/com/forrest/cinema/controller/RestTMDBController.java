@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import com.forrest.cinema.entities.MovieTMDB;
+import com.forrest.cinema.entities.tmdb.CreditsTMDB;
+import com.forrest.cinema.entities.tmdb.MovieTMDB;
 import com.forrest.cinema.exceptions.ApiTMDBException;
 
 import reactor.core.publisher.Mono;
@@ -115,6 +116,26 @@ public class RestTMDBController {
 		}
 		
 		return filePath;
+	}
+	
+	public Mono<CreditsTMDB> getCreditsFilmsTMDB(String movieId) throws ApiTMDBException {
+		
+		webClient = WebClient.create();
+
+		Mono<CreditsTMDB> creditsMono = webClient.get()
+				.uri("https://api.themoviedb.org/3/movie/{movieId}/credits?api_key={apiKey}&language=fr-FR", movieId,
+						apiKey)
+				.retrieve()
+				.onStatus(status -> status == HttpStatus.NOT_FOUND,
+						res -> Mono.error(new ApiTMDBException(
+								"Erreur client : " + res.statusCode() + " for id= " + movieId)))
+				.onStatus(status -> status == HttpStatus.INTERNAL_SERVER_ERROR,
+						res -> Mono.error(new ApiTMDBException("Erreur serveur : " + res.statusCode())))
+				.bodyToMono(CreditsTMDB.class)
+				.doOnError(error -> Mono.error(new ApiTMDBException("Erreur de l'API : " + error.getMessage())))
+				.onErrorResume(error -> Mono.empty());
+
+		return creditsMono;
 	}
 
 }
