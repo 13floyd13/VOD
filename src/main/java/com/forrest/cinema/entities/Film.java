@@ -54,8 +54,8 @@ public class Film implements Serializable {
 	private String synopsisFilm;
 	@Column(length = 255)
 	private String countryFilm;
-	@Column(length = 255)
-	private String awardsFilms;
+	@Column(length = 255, nullable = true)
+	private List<String> awardsFilms;
 	@Column(length = 255)
 	private String posterFilm;
 	@Column(length = 255)
@@ -69,15 +69,16 @@ public class Film implements Serializable {
 	@Column(length = 255)
 	private String tagline;
 	@Column(length = 255)
-	private String productionFilm;
+	private List<String> productionFilm;
 	@Column(length = 255)
 	private String languagesFilm;
 	@Column(nullable = true)
-	private Integer distanceTitleToOfficialTitle;
+	private Integer distanceTitles;
 	@Column(length = 500)
 	private String path;
 	@Column(nullable = true)
 	private double size;
+	@Column(nullable = true)
 	private Integer voteCount;
 	@Column(nullable = true)
 	private Boolean seen;
@@ -289,14 +290,14 @@ public class Film implements Serializable {
 	/**
 	 * @return the awardsFilms
 	 */
-	public String getAwardsFilms() {
+	public List<String> getAwardsFilms() {
 		return awardsFilms;
 	}
 
 	/**
 	 * @param awardsFilms the awardsFilms to set
 	 */
-	public void setAwardsFilms(String awardsFilms) {
+	public void setAwardsFilms(List<String> awardsFilms) {
 		this.awardsFilms = awardsFilms;
 	}
 
@@ -387,14 +388,14 @@ public class Film implements Serializable {
 	/**
 	 * @return the productionFilm
 	 */
-	public String getProductionFilm() {
+	public List<String> getProductionFilm() {
 		return productionFilm;
 	}
 
 	/**
 	 * @param productionFilm the productionFilm to set
 	 */
-	public void setProductionFilm(String productionFilm) {
+	public void setProductionFilm(List<String> productionFilm) {
 		this.productionFilm = productionFilm;
 	}
 
@@ -416,14 +417,14 @@ public class Film implements Serializable {
 	 * @return the distanceTitleToOfficialTitle
 	 */
 	public Integer getDistanceTitleToOfficialTitle() {
-		return distanceTitleToOfficialTitle;
+		return distanceTitles;
 	}
 
 	/**
 	 * @param distanceTitleToOfficialTitle the distanceTitleToOfficialTitle to set
 	 */
-	public void setDistanceTitleToOfficialTitle(Integer distanceTitleToOfficialTitle) {
-		this.distanceTitleToOfficialTitle = distanceTitleToOfficialTitle;
+	public void setDistanceTitles(Integer distanceTitles) {
+		this.distanceTitles = distanceTitles;
 	}
 
 	/**

@@ -171,13 +171,12 @@ public class FilmServiceImpl implements FilmService {
 	
 					film.setOfficialTitleFilm(officialTitleFilm);
 					film.setIdImdb(idImdb);
-					film.setDistanceTitleToOfficialTitle(distance);
+					film.setDistanceTitles(distance);
 					
-					System.out.println(titleFilm +" -> "+ officialTitleFilm +" -> "+ distance);
 					updatedFilm.add(film);
 				} else {
 					film.setOfficialTitleFilm("ERROR");
-					film.setDistanceTitleToOfficialTitle(999);
+					film.setDistanceTitles(999);
 					updatedFilm.add(film);
 					Logger.warn("Nothing find in imdb search for " + titleFilm);
 				}
@@ -256,14 +255,16 @@ public class FilmServiceImpl implements FilmService {
 					film.setGenres(newGenres);
 					
 
-					String productions = "";
+					//String productions = "";
+					List<String> prods = new ArrayList<>();
 					for (ProductionCompagnyTMDB prod : movie.getProduction_companies()) {
-						productions += prod.getName();
-						productions += " ";
-						productions += prod.getOrigin_country();
-						productions += " / ";
+//						productions += prod.getName();
+//						productions += " ";
+//						productions += prod.getOrigin_country();
+//						productions += " / ";
+						prods.add(prod.getName());
 					}
-						film.setProductionFilm(CinemaUtilities.getStringLimited(productions, 255));
+						film.setProductionFilm(prods);
 				}
 				
 				if (credits != null) {
