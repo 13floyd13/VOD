@@ -58,3 +58,23 @@ local.properties
 HELP.md 
 mvnw
 mvnw.cmd
+
+
+#Angular
+# Folders
+node_modules/
+dist/
+
+# Files
+.DS_Store
+.idea
+npm-debug.log
+
+# Dependency files
+package-lock.json
+yarn.lock
+
+# Compiled files
+*.js
+*.js.map
+*.d.ts
